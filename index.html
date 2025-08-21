@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Growth Tracking Board</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        h1 {
+            font-weight: 500;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .status-bar {
+            background: #34495e;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        
+        .main-content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .user-info {
+            grid-column: 1 / -1;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 18px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .input-control {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 120px;
+            text-align: center;
+        }
+        
+        .measurement-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-title {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .measurement-value {
+            font-size: 48px;
+            font-weight: 300;
+            text-align: center;
+            color: #2c3e50;
+            margin: 10px 0;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .measurement-unit {
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+        
+        .progress-container {
+            margin-top: 20px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .height-progress {
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+        }
+        
+        .weight-progress {
+            background: linear-gradient(90deg, #3498db, #e74c3c);
+        }
+        
+        .percentile-display {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+        
+        .percentile-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .bmi-section {
+            grid-column: 1 / -1;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .bmi-value {
+            font-size: 42px;
+            text-align: center;
+            font-weight: 300;
+            margin: 10px 0;
+        }
+        
+        .bmi-classification {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .bmi-scale {
+            height: 20px;
+            background: linear-gradient(90deg, #3498db, #2ecc71, #f1c40f, #e74c3c);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .bmi-marker {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 30px;
+            background: #2c3e50;
+            transform: translateX(-50%);
+        }
+        
+        .history-section {
+            grid-column: 1 / -1;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .history-title {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .history-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .history-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .history-value {
+            font-size: 18px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .history-date {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .instructions {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 20px;
+            font-size: 14px;
+            padding: 0 20px 20px;
+        }
+        
+        .device-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-connected {
+            background: #2ecc71;
+            box-shadow: 0 0 8px #2ecc71;
+        }
+        
+        .status-disconnected {
+            background: #e74c3c;
+        }
+        
+        .action-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .action-button:hover {
+            background: #2980b9;
+        }
+        
+        .sex-selector {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .sex-button {
+            padding: 8px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .sex-button.active {
+            border-color: #3498db;
+            background: #ebf5fb;
+            color: #3498db;
+        }
+        
+        .sex-button i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Smart Growth Tracking Board</h1>
+            <div class="subtitle">Height, Weight & Growth Percentile Calculator</div>
+        </header>
+        
+        <div class="status-bar">
+            <div class="current-time">10:24 AM</div>
+            <div class="device-connection">Device Status: <strong>Connected</strong></div>
+        </div>
+        
+        <div class="main-content">
+            <div class="user-info">
+                <div class="info-item">
+                    <div class="info-label">AGE</div>
+                    <input type="number" class="input-control" id="age-input" min="2" max="18" value="8">
+                    <div class="info-value">years</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">SEX</div>
+                    <div class="sex-selector">
+                        <button class="sex-button active" data-sex="male">
+                            <i class="fas fa-mars"></i> Male
+                        </button>
+                        <button class="sex-button" data-sex="female">
+                            <i class="fas fa-venus"></i> Female
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">PREVIOUS DATA</div>
+                    <select class="input-control" id="history-select">
+                        <option>Last measurement</option>
+                        <option>1 week ago</option>
+                        <option>1 month ago</option>
+                        <option>3 months ago</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="measurement-card">
+                <div class="card-title">HEIGHT</div>
+                <div class="measurement-value">- <span class="measurement-unit">cm</span></div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Short</span>
+                        <span>Tall</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill height-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="percentile-display">
+                    Height percentile: <span class="percentile-value">-</span>
+                </div>
+            </div>
+            
+            <div class="measurement-card">
+                <div class="card-title">WEIGHT</div>
+                <div class="measurement-value">- <span class="measurement-unit">kg</span></div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Light</span>
+                        <span>Heavy</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill weight-progress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="percentile-display">
+                    Weight-for-age: <span class="percentile-value">-</span>
+                </div>
+            </div>
+            
+            <div class="bmi-section">
+                <div class="card-title">BODY MASS INDEX (BMI)</div>
+                <div class="bmi-value">-</div>
+                <div class="bmi-classification">Please step on the board</div>
+                <div class="bmi-scale">
+                    <div class="bmi-marker" style="left: 0%"></div>
+                </div>
+                <div class="progress-label">
+                    <span>Underweight</span>
+                    <span>Normal</span>
+                    <span>Overweight</span>
+                    <span>Obese</span>
+                </div>
+                <div class="percentile-display">
+                    BMI percentile: <span class="percentile-value">-</span>
+                </div>
+            </div>
+            
+            <div class="history-section">
+                <div class="history-title">RECENT MEASUREMENTS</div>
+                <div class="history-items">
+                    <div class="history-item">
+                        <div class="history-value">125 cm / 25 kg</div>
+                        <div class="history-date">Yesterday, 9:12 AM</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-value">124 cm / 24.5 kg</div>
+                        <div class="history-date">Oct 12, 7:45 PM</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-value">123 cm / 24 kg</div>
+                        <div class="history-date">Oct 10, 8:30 AM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <p>Step onto the board to measure your height and weight</p>
+            <button class="action-button" id="measure-btn">
+                <i class="fas fa-weight-scale"></i> Simulate Measurement
+            </button>
+            <div class="device-status">
+                <div class="status-indicator status-connected"></div>
+                <span>Board ready for measurement</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.querySelector('.current-time').textContent = timeString;
+        }
+        
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // Sex selector functionality
+        document.querySelectorAll('.sex-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.sex-button').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Calculate percentiles based on CDC growth charts
+        function calculatePercentile(age, sex, value, type) {
+            // Simplified percentile calculation for demonstration
+            // In a real application, this would use actual growth chart data
+            
+            let median, spread;
+            
+            if (type === 'height') {
+                // Height median values for age (simplified)
+                median = 75 + (age * 6);
+                spread = 20 + (age * 1.5);
+            } else if (type === 'weight') {
+                // Weight median values for age (simplified)
+                median = 10 + (age * 2.5);
+                spread = 8 + (age * 1.2);
+                
+                // Adjust for sex
+                if (sex === 'male' && age > 10) median += 2;
+            } else if (type === 'bmi') {
+                // BMI median values for age (simplified)
+                median = 16 + (age * 0.2);
+                if (age > 14) median = 21 - (age * 0.1);
+                spread = 3 + (age * 0.1);
+            }
+            
+            // Calculate approximate percentile
+            const z = (value - median) / spread;
+            // Convert z-score to percentile
+            let percentile = (0.5 * (1 + Math.erf(z / Math.sqrt(2)))) * 100;
+            
+            return Math.round(percentile);
+        }
+        
+        // Error function approximation
+        Math.erf = function(x) {
+            // Abramowitz and Stegun approximation
+            const a1 =  0.254829592;
+            const a2 = -0.284496736;
+            const a3 =  1.421413741;
+            const a4 = -1.453152027;
+            const a5 =  1.061405429;
+            const p  =  0.3275911;
+            
+            const sign = (x >= 0) ? 1 : -1;
+            x = Math.abs(x);
+            
+            const t = 1.0 / (1.0 + p * x);
+            const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+            
+            return sign * y;
+        };
+        
+        // Simulate measurement when user clicks the button
+        document.getElementById('measure-btn').addEventListener('click', function() {
+            // Get age and sex
+            const age = parseInt(document.getElementById('age-input').value);
+            const sex = document.querySelector('.sex-button.active').dataset.sex;
+            
+            // Generate measurements based on age and sex
+            let height, weight;
+            
+            if (age < 5) {
+                height = Math.floor(Math.random() * 30) + 80; // 80-110 cm
+                weight = Math.floor(Math.random() * 10) + 10; // 10-20 kg
+            } else if (age < 10) {
+                height = Math.floor(Math.random() * 40) + 110; // 110-150 cm
+                weight = Math.floor(Math.random() * 20) + 20; // 20-40 kg
+            } else if (age < 15) {
+                height = Math.floor(Math.random() * 40) + 140; // 140-180 cm
+                weight = Math.floor(Math.random() * 30) + 40; // 40-70 kg
+            } else {
+                height = Math.floor(Math.random() * 30) + 160; // 160-190 cm
+                weight = Math.floor(Math.random() * 40) + 50; // 50-90 kg
+            }
+            
+            // Adjust for sex
+            if (sex === 'male' && age > 12) {
+                height += Math.floor(Math.random() * 10);
+                weight += Math.floor(Math.random() * 10);
+            } else if (sex === 'female' && age > 10) {
+                height -= Math.floor(Math.random() * 5);
+            }
+            
+            // Update height display
+            document.querySelector('.measurement-card:nth-child(2) .measurement-value').innerHTML = 
+                `${height} <span class="measurement-unit">cm</span>`;
+            
+            // Update weight display
+            document.querySelector('.measurement-card:nth-child(3) .measurement-value').innerHTML = 
+                `${weight} <span class="measurement-unit">kg</span>`;
+            
+            // Update progress bars
+            const heightProgress = Math.min(100, ((height - 80) / 110) * 100);
+            document.querySelector('.height-progress').style.width = `${heightProgress}%`;
+            
+            const weightProgress = Math.min(100, ((weight - 10) / 80) * 100);
+            document.querySelector('.weight-progress').style.width = `${weightProgress}%`;
+            
+            // Calculate and display BMI
+            const heightInMeters = height / 100;
+            const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+            document.querySelector('.bmi-value').textContent = bmi;
+            
+            // Classify BMI
+            let classification = '';
+            let markerPosition = 0;
+            
+            if (bmi < 18.5) {
+                classification = 'Underweight';
+                markerPosition = (bmi / 18.5) * 25;
+            } else if (bmi < 25) {
+                classification = 'Normal weight';
+                markerPosition = 25 + ((bmi - 18.5) / 6.5) * 25;
+            } else if (bmi < 30) {
+                classification = 'Overweight';
+                markerPosition = 50 + ((bmi - 25) / 5) * 25;
+            } else {
+                classification = 'Obese';
+                markerPosition = 75 + (Math.min((bmi - 30), 20) / 20) * 25;
+            }
+            
+            document.querySelector('.bmi-classification').textContent = classification;
+            document.querySelector('.bmi-marker').style.left = `${Math.min(markerPosition, 100)}%`;
+            
+            // Calculate and display percentiles
+            const heightPercentile = calculatePercentile(age, sex, height, 'height');
+            const weightPercentile = calculatePercentile(age, sex, weight, 'weight');
+            const bmiPercentile = calculatePercentile(age, sex, bmi, 'bmi');
+            
+            document.querySelectorAll('.percentile-value')[0].textContent = `${heightPercentile}th`;
+            document.querySelectorAll('.percentile-value')[1].textContent = `${weightPercentile}th`;
+            document.querySelectorAll('.percentile-value')[2].textContent = `${bmiPercentile}th`;
+            
+            // Add to history
+            const now = new Date();
+            const dateString = now.toLocaleDateString([], {month: 'short', day: 'numeric'});
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const historyItems = document.querySelector('.history-items');
+            const newHistoryItem = document.createElement('div');
+            newHistoryItem.className = 'history-item';
+            newHistoryItem.innerHTML = `
+                <div class="history-value">${height} cm / ${weight} kg</div>
+                <div class="history-date">${dateString}, ${timeString}</div>
+            `;
+            
+            historyItems.prepend(newHistoryItem);
+            
+            // Keep only 3 most recent items
+            if (historyItems.children.length > 3) {
+                historyItems.removeChild(historyItems.lastChild);
+            }
+            
+            // Show a temporary message
+            const instructions = document.querySelector('.instructions p');
+            instructions.textContent = "Measurement complete! Growth percentiles calculated.";
+            
+            setTimeout(() => {
+                instructions.textContent = "Step onto the board to measure your height and weight";
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
